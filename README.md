@@ -1,7 +1,6 @@
 # Hands-On Machine Learning with Scikit-Learn and PyTorch
 
-The goal of this project is to teach you the fundamentals of Machine Learning in
-python. It contains the example code and solutions to the exercises in the first edition of my upcoming O'Reilly book [Hands-on Machine Learning with Scikit-Learn and PyTorch (1st edition)](https://homl.info/er):
+The goal of this project is to teach you the fundamentals of Machine Learning in Python. It contains the example code and solutions to the exercises in the first edition of my new O'Reilly book [Hands-on Machine Learning with Scikit-Learn and PyTorch (1st edition)](https://homl.info/):
 
 <a href="https://homl.info/er"><img src="https://www.oreilly.com/covers/urn:orm:book:9798341607972/400w/" title="book" width="150" border="0" /></a>
 
@@ -21,30 +20,10 @@ python. It contains the example code and solutions to the exercises in the first
 
 - [github.com's notebook viewer](https://github.com/ageron/handson-mlp/blob/main/index.ipynb) also works but it's not ideal: it's slower, the math equations are not always displayed correctly, and large notebooks often fail to open.
 
-### Want to run this project using a Docker image?
-
-Read the [Docker instructions](https://github.com/ageron/handson-mlp/tree/main/docker).
-
 ### Want to install this project on your own machine?
 
-Start by installing [Anaconda](https://www.anaconda.com/products/distribution) (or [Miniconda](https://docs.conda.io/en/latest/miniconda.html)), [git](https://git-scm.com/downloads), and if you have a PyTorch-compatible GPU, install the [GPU driver](https://www.nvidia.com/Download/index.aspx), as well as the appropriate version of CUDA and cuDNN (see PyTorch's documentation for more details).
+Check out the [installation instructions](INSTALL.md).
 
-Next, clone this project by opening a terminal and typing the following commands:
-
-    git clone https://github.com/ageron/handson-mlp.git
-    cd handson-mlp
-
-Next, run the following commands:
-
-    conda env create -f environment.yml
-    conda activate homlp
-    python -m ipykernel install --user --name=python3
-
-Finally, start Jupyter:
-
-    jupyter notebook
-
-If you need further instructions, read the [detailed installation instructions](INSTALL.md).
 
 # FAQ
 
