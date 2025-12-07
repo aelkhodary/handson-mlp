@@ -1,110 +1,141 @@
 # Installation
 
-## Download this repository
+To run these notebooks, there's **no need to install anything**: you can just run them in your browser, using Google Colab:
 
-To install this repository and run the Jupyter notebooks on your machine, you will first need git, which you may already have. Open a terminal and type `git` to check. If you do not have git, you can download it from [git-scm.com](https://git-scm.com/).
+- <a href="https://colab.research.google.com/github/ageron/handson-mlp/blob/main/" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> (recommended)
 
-Next, clone this repository by opening a terminal and typing the following commands (on Windows, replace `$HOME` with `%USERPROFILE%`):
+Other platforms like Kaggle or Binder should work as well.
 
-    cd $HOME  # or any other development directory you prefer
-    git clone https://github.com/ageron/handson-mlp.git
-    cd handson-mlp
+However, if you really want to run these notebooks on your own machine, then please follow the instructions below.
 
-If you do not want to install git, you can instead download [main.zip](https://github.com/ageron/handson-mlp/archive/main.zip), unzip it, rename the resulting directory to `handson-mlp` and move it to your development directory.
+> NOTE: Alternatively, you can [run these notebooks in a docker container](https://github.com/ageron/handson-mlp/blob/main/docker/README.md).
 
-## Install Anaconda, Miniconda, or Micromamba
+## Step 1, ensure you have uv and git
+Make sure you have [uv](https://docs.astral.sh/uv/getting-started/installation) and [git](https://git-scm.com/downloads) installed:
 
-Next, you will need Python 3 and a bunch of Python libraries. The simplest way to install these is to [download and install Anaconda](https://www.anaconda.com/distribution/), which is a great cross-platform Python distribution for scientific computing. It comes bundled with many scientific libraries, including NumPy, Pandas, Matplotlib, Scikit-Learn and many more, so it's quite a large installation.
+You can use another Python package manager if you know what you are doing, but I've found `uv` to be very fast and simple to use, so I recommend it.
 
-If you prefer a lightweight Anaconda distribution, you can [install Miniconda](https://docs.conda.io/en/latest/miniconda.html), which contains the bare minimum to run the `conda` packaging tool.
+## Step 2, install the project and its dependencies
+Let's download the `handson-mlp` project into your home directory, install all the required Python libraries into a new virtual environment (venv), and make this environment the default for Jupyter notebooks. Open a terminal and run:
 
-Another great option (and my personal favorite) is [Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html): it installs `mamba`, a significantly faster drop-in replacement for `conda`. If you choose this option, then replace `conda` with `micromamba` in all the instructions below.
+```shell
+cd  # goes to your home directory
+git clone https://github.com/ageron/handson-mlp.git
+cd handson-mlp
+uv sync --frozen  # installs all the required Python libraries
 
-In any case, you should install the latest version of the chosen tool.
+# On MacOS or Linux
+source .venv/bin/activate
 
-During the installation on MacOSX and Linux, you will be asked whether to initialize Anaconda by running `conda init`: you should accept, as it will update your shell script to ensure that `conda` is available whenever you open a terminal. After the installation, you must close your terminal and open a new one for the changes to take effect.
+# On Windows using the Command Prompt (cmd.exe)
+.venv\Scripts\activate.bat
 
-During the installation on Windows, you will be asked whether you want the installer to update the `PATH` environment variable. This is not recommended as it may interfere with other software. Instead, after the installation you should open the Start Menu and launch an Anaconda Shell whenever you want to use Anaconda.
+# On Windows using the PowerShell
+.venv\Scripts\Activate.ps1
 
-Once Anaconda or Miniconda is installed, run the following command to update the `conda` packaging tool to the latest version (this is not needed for Micromamba):
+python -m ipykernel install --user --name=python3  # make this the default
+```
 
-    conda update -n base -c defaults conda
+If you get an error when activating the virtual environment in PowerShell, you may need to tweak the execution policy to allow PowerShell to execute scripts (this only applies to this terminal Window):
+ 
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
 
-> **Note**: if you don't like Anaconda for some reason, then you can [install Python 3](https://www.python.org/downloads/) and use `pip` to install the required libraries manually (this is not recommended, unless you really know what you are doing). I recommend using Python 3.12, since some libs don't support Python 3.13 yet. If you choose this route, make sure to install the `certifi` package, or else you will not have the root SSL certificates so SSL connections will fail.
+## Step 3, if you have a GPU, upgrade the PyTorch libraries
+If you have a GPU, make sure its driver is properly installed (please see your GPU manufacter's instructions for more details).
 
-## Install the GPU Driver and Libraries
+Next, you must upgrade the PyTorch libraries for GPU support:
 
-If you have a PyTorch-compatible Nvidia GPU (with Compute Capability ≥ 3.5), and you want PyTorch to use it, then you should download the latest driver for your card from [nvidia.com](https://www.nvidia.com/Download/index.aspx?lang=en-us) and install it.
+```shell
+cd
+cd handson-mlp
+source .venv/bin/activate  # on Windows, replace with same command as in step 2
+uv pip uninstall torch torchvision torchaudio
 
-You will also need NVidia's CUDA and cuDNN libraries, but the good news is that they will be installed automatically when you install the `pytorch-cuda` package using `conda` (or `mamba`). However, if you don't use `conda`, you will have to install them manually. If you hit any roadblock, see PyTorch's [installation instructions](https://pytorch.org/get-started/locally/) for more details.
+# For an Nvidia CUDA 12.9 GPU (for other CUDA platforms, replace cu129 as needed)
+uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu129
+```
 
-## Create the `homlp` Environment
+**NOTE**: If you have a MacBook with MPS support ([Metal Performance Shaders](https://developer.apple.com/documentation/metalperformanceshaders)) then you don't need to upgrade the PyTorch libraries, as the default versions support MPS out of the box.
 
-Next, make sure you're in the `handson-mlp` directory and run the following command. It will create a new `conda` environment containing every library you will need to run all the notebooks (by default, the environment will be named `homlp`, but you can choose another name using the `-n` option):
+## How to start and stop the Jupyter Notebook server
+Every time you want to start the Jupyter Notebook server, open a terminal and run:
 
-    conda env create -f environment.yml
+```shell
+cd
+cd handson-mlp
+source .venv/bin/activate  # on Windows, replace with same command as in step 2
+jupyter notebook
+```
 
-Next, activate the new environment:
+To stop the server, press Ctrl-C in the terminal window (be sure to save your changes first).
 
-    conda activate homlp
 
-## Start Jupyter
+## Optional softwares and libraries
 
-You're almost there! You just need to register the `homlp` conda environment to Jupyter. The notebooks in this project will default to the environment named `python3`, so it's best to register this environment using the name `python3` (if you prefer to use another name, you will have to select it in the "Kernel > Change kernel..." menu in Jupyter every time you open a notebook):
+You can optionally install the following softwares as well:
 
-    python3 -m ipykernel install --user --name=python3
+* [ffmpeg](https://www.ffmpeg.org/download.html): used in the Matplotlib tutorial, if you want to export an animation as an .mp4 video.
+* [imagemagick](https://imagemagick.org/): used in the Matplotlib tutorial, if you want to export an animation as a .gif file.
+* [graphviz](https://graphviz.org/): used in Chapter 5 if you want to generate an image from a .dot file.
 
-And that's it! You can now start Jupyter like this:
+You may also want to install the Box2D library, which is needed for a couple of exercises in Chapter 19, to load the LunarLander-v2 and BipedalWalker-v3 environments. You can generally install it by opening a terminal and running:
 
-    jupyter lab
+```shell
+cd
+cd handson-mlp
+source .venv/bin/activate  # on Windows, replace with same command as in step 2
+uv add box2d
+```
 
-Or, if you prefer the older and simpler user interface:
+This should work on most platforms. However, if you get an error, then it most likely means that the binary for your platform is not available, so you must build this library from the source code. For this, you first need to ensure that you have the essential tools for building a C++ project. For example, on Debian and Ubuntu you can open a terminal and run:
 
-    jupyter notebook
+```shell
+apt update && apt install -y build-essential cmake
+```
 
-This should open up your browser, and you should see Jupyter's tree view, with the contents of the current directory. If your browser does not open automatically, visit [localhost:8888](http://localhost:8888/tree). Click on `index.ipynb` to get started.
+Then you can install the `box2d-py` package (not `box2d`) from source:
 
-Congrats! You are ready to learn Machine Learning, hands on!
+```shell
+cd
+cd handson-mlp
+source .venv/bin/activate  # on Windows, replace with same command as in step 2
+uv add swig
+uv add box2d-py
+```
 
-When you're done with Jupyter, you can close it by typing Ctrl-C in the Terminal window where you started it. Every time you want to work on this project, you will need to open a Terminal, and run:
+## Update this project and its libraries
 
-    cd $HOME # or whatever development directory you chose earlier
-    cd handson-mlp
-    conda activate homlp
-    jupyter lab  # or jupyter notebook
-
-## Update This Project and its Libraries
-
-I regularly update the notebooks to fix issues and add support for new libraries. So make sure you update this project regularly.
+I regularly update the notebooks to fix issues and add support for the latest library versions. So make sure you update this project regularly.
 
 For this, open a terminal, and run:
 
-    cd $HOME # or whatever development directory you chose earlier
-    cd handson-mlp # go to this project's directory
-    git pull
+```shell
+cd
+cd handson-mlp
+git pull
+```
 
 If you get an error, it's probably because you modified a notebook. In this case, before running `git pull` you will first need to commit your changes. I recommend doing this in your own branch, or else you may get conflicts:
 
-    git checkout -b my_branch # you can use another branch name if you want
-    git add -u
-    git commit -m "describe your changes here"
-    git checkout main
-    git pull
+```shell
+git checkout -b my_branch # you can use another branch name if you want
+git add -u
+git commit -m "describe your changes here"
+git checkout main
+git pull
+```
 
-Next, let's update the libraries. First, let's update `conda` itself:
+Next, let's update the libraries:
 
-    conda update -c defaults -n base conda
+```shell
+cd
+cd handson-mlp
+source .venv/bin/activate  # on Windows, replace with same command as in step 2
+uv sync --frozen
+```
 
-Then we'll delete this project's `homlp` environment:
+Restart the Jupyter Notebook server (it may not be required, but it's safer).
 
-    conda activate base
-    conda env remove -n homlp
-
-And recreate the environment:
-
-    conda env create -f environment.yml
-
-Lastly, we reactivate the environment and start Jupyter:
-
-    conda activate homlp
-    jupyter lab  # or jupyter notebook
+That's it, have fun!
